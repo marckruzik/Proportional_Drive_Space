@@ -1,0 +1,136 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":null,"items":[{"name":"csharp","languageName":"C#","aliases":["c#","cs"]},{"name":"fsharp","languageName":"F#","aliases":["f#","fs"]},{"name":"pwsh","languageName":"PowerShell","aliases":["powershell"]},{"name":"javascript","languageName":"JavaScript","aliases":["js"]},{"name":"html","languageName":"HTML"},{"name":"sql","languageName":"SQL"},{"name":"kql","languageName":"KQL"},{"name":"mermaid","languageName":"Mermaid"},{"name":"http","languageName":"HTTP"},{"name":"value"}]}}
+
+#!markdown
+
+## Drive information
+
+#!csharp
+
+using System.IO;
+
+#!csharp
+
+public record Drive
+{
+    public string letter;
+    public string label;
+    public int space_used_gb;
+    public int space_free_gb;
+
+    public int space_total => space_used_gb + space_free_gb;
+}
+
+int from_byte_to_gb(long byt) => (int)(byt / Math.Pow(1024, 3));
+
+List<Drive> list_drive = DriveInfo.GetDrives().Select(drive =>
+    new Drive
+    {
+        letter = drive.Name,
+        label = drive.VolumeLabel,
+        space_used_gb = from_byte_to_gb(drive.TotalSize - drive.AvailableFreeSpace),
+        space_free_gb = from_byte_to_gb(drive.AvailableFreeSpace)
+    }
+).ToList();
+
+#!csharp
+
+list_drive
+
+#!markdown
+
+## Plot
+
+#!csharp
+
+#r "nuget: ScottPlot, 5.0.54"
+using ScottPlot;
+using ScottPlot.TickGenerators; // To have custom bottom ticks
+using Microsoft.DotNet.Interactive.Formatting;
+
+Formatter.Register(typeof(ScottPlot.Plot), (p, w) => 
+    w.Write(((ScottPlot.Plot)p).GetPngHtml(400, 300)), HtmlFormatter.MimeType);
+
+public static void Display(this Plot plot, int width=400, int height=300)
+    =>  display(HTML(plot.GetPngHtml(width, height)));
+
+#!csharp
+
+ScottPlot.Plot myPlot = new();
+myPlot.Title("Drive Space Proportional");
+
+//--------------------------------------------------------
+// Bars
+//--------------------------------------------------------
+Color colorEmpty = Color.FromHex("E8E8E8");
+Color colorFull = Color.FromHex("25A0DC");
+
+int pi(int i) => list_drive.Count - 1 - i;
+
+ScottPlot.Bar[] bars =
+    list_drive.SelectMany((disk, i) => new[]
+    {
+        new Bar
+        {
+            Position = pi(i),
+            ValueBase = 0, // column left position
+            Value = disk.space_free_gb, // column right position
+            FillColor = colorEmpty,
+            Label = $"{disk.space_free_gb}Gb",
+            CenterLabel = true,
+        },
+        new Bar
+        {
+            Position = pi(i),
+            ValueBase = disk.space_free_gb, // column left position
+            Value = disk.space_total, // column right position
+            FillColor = colorFull,
+            Label = $"{disk.space_used_gb}Gb",
+            CenterLabel = true,
+        },
+    }
+    ).ToArray();
+
+var barPlot = myPlot.Add.Bars(bars);
+barPlot.Horizontal = true;
+
+//--------------------------------------------------------
+// Left Ticks
+//--------------------------------------------------------
+Tick[] ticksLeft =
+    list_drive
+    .Select((disk, i) => new Tick(pi(i), $"{disk.letter}\r\n{disk.label}"))
+    .ToArray();
+
+int height_total = 60 + list_drive.Count * (40 + 10) + 110;
+
+myPlot.Axes.Left.TickGenerator = new ScottPlot.TickGenerators.NumericManual(ticksLeft);
+myPlot.Axes.Left.MajorTickStyle.Length = 0;
+
+//--------------------------------------------------------
+// Bottom ticks
+//--------------------------------------------------------
+myPlot.Axes.Bottom.TickGenerator = new NumericAutomatic
+{
+    LabelFormatter = (double position) => $"{position} Gb"
+};
+
+//--------------------------------------------------------
+// Legend
+//--------------------------------------------------------
+myPlot.Legend.IsVisible = true;
+myPlot.Legend.Alignment = Alignment.UpperRight;
+myPlot.Legend.ManualItems.Add(new() { LabelText = "Free space", FillColor = colorEmpty });
+myPlot.Legend.ManualItems.Add(new() { LabelText = "Used space", FillColor = colorFull });
+
+myPlot.ShowLegend(Edge.Bottom);
+
+//--------------------------------------------------------
+// Display
+//--------------------------------------------------------
+
+myPlot.HideGrid();
+myPlot.Axes.Margins(left: 0);
+
+myPlot.Display(1200, height_total);
