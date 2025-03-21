@@ -15,16 +15,15 @@ https://code.visualstudio.com/docs/languages/polyglot
 ### ScottPlot (nuget)
 Used in the notebook, [ScottPlot](https://scottplot.net/) displays the chart.
 
-This notebook is a good way to see how to use several aspects of ScottPlot:
-* stacked bars: with their left and right positions
-* vertical display
-* explicit position for bars and ticks: to display data in the order provided by the code, as ScottPlot sets the first element at the bottom of the chart
-* textual ticks: left axis, the drive names
-* custom ticks: bottom axis, the total size in Gb
-* custom legend: to create and display a legend independently from the bars code
+* Stacked bars: with specified left and right positions.
+* Vertical display.
+* Explicit positioning for bars and ticks: ensuring data is displayed in the order provided by the code, as ScottPlot is designed to place the first element at the bottom of the chart.
+* Textual ticks: on the left axis, displaying the drive names.
+* Custom ticks: on the bottom axis, showing the total size in GB.
+* Custom legend: for creating and displaying a legend independently from the bar code.
 
 ### Custom calculations
-The total height of the graph is automatically extended, depending on the unmber of drives.
+The total height of the graph is automatically adjusted based on the number of drives.
 
 ## Shortcomings
 * Small values are displayed in a space that is too small (see [complex example](image/complex.png)).
