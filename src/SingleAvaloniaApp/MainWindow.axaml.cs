@@ -6,6 +6,7 @@ using Avalonia.Media;
 using Avalonia;
 using System.Runtime.InteropServices;
 using Avalonia.Interactivity;
+using DrivePlot;
 
 namespace SingleAvaloniaApp
 {
@@ -26,31 +27,29 @@ namespace SingleAvaloniaApp
 
         private void GenerateAndDisplayImage()
         {
-            int width = _random.Next(640, 800 + 1);
-            int height = _random.Next(480, 600 + 1);
-
-            var bitmap = GenerateRandomImage(width, height);
+            //var bitmap = GenerateRandomImage(width, height);
+            string plot_filepath = Plot_Generator.from_width_get_filepath(800);
+            var bitmap = new Bitmap(plot_filepath);
 
             DisplayImage.Source = bitmap;
 
-            this.Width = width;
-            this.Height = height + 50;
+            this.Width = bitmap.Size.Width;
+            this.Height = bitmap.Size.Height + 50;
         }
 
         private Bitmap GenerateRandomImage(int width, int height)
         {
             var pixels = new int[width * height];
 
-            // Remplir le tableau avec des couleurs aléatoires
             for (int i = 0; i < pixels.Length; i++)
             {
                 var color = Color.FromArgb(
-                    255, // alpha
-                    (byte)_random.Next(256), // red
-                    (byte)_random.Next(256), // green
-                    (byte)_random.Next(256)  // blue
+                    255,
+                    (byte)_random.Next(256),
+                    (byte)_random.Next(256),
+                    (byte)_random.Next(256)
                 );
-                pixels[i] = (int)color.ToUInt32(); // Convertir en format ARGB 32 bits
+                pixels[i] = (int)color.ToUInt32();
             }
 
             Vector dpi = new Vector(96, 96); 
@@ -67,10 +66,6 @@ namespace SingleAvaloniaApp
             } 
   
             return bitmap;
-        }
-
-        private void Button_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
         }
     }
 }
