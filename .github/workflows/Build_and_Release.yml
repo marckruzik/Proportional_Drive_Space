@@ -1,0 +1,75 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+  
+env:
+  DOTNET_VERSION: '8.0.x'
+  WORKING_DIRECTORY: 'src'
+  OUT_DIRECTORY: ${{ github.workspace }}/out
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Define Directories
+        run: |
+          RELEASE_FOLDER_NAME="${{ github.event.repository.name }}-${{ github.ref_name }}"
+          echo "RELEASE_FOLDER_NAME=$RELEASE_FOLDER_NAME" >> $GITHUB_ENV
+
+          RELEASE_DIRECTORY="${{ env.OUT_DIRECTORY }}/$RELEASE_FOLDER_NAME"
+          echo "RELEASE_DIRECTORY=$RELEASE_DIRECTORY" >> $GITHUB_ENV
+
+          ZIP_FILEPATH="${{ github.workspace }}/$RELEASE_FOLDER_NAME.zip"
+          echo "ZIP_FILEPATH=$ZIP_FILEPATH" >> $GITHUB_ENV
+          
+          APP_DIRECTORY="${{ env.WORKING_DIRECTORY }}/SingleAvaloniaApp"
+          echo "APP_DIRECTORY=$APP_DIRECTORY" >> $GITHUB_ENV
+    
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+
+      - name: Build project Debug
+        run: dotnet publish -c Debug
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+
+      - name: Run tests Debug
+        run: dotnet test -c Debug --no-build --verbosity normal
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+
+      - name: Build project Release
+        run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeAllContentForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:PublishTrimmed=true -o ${{ env.RELEASE_DIRECTORY }}
+        working-directory: ${{ env.APP_DIRECTORY }}
+
+      - name: Zip
+        uses: thedoctor0/zip-release@0.7.1
+        with:
+          type: 'zip'
+          filename: ${{ env.ZIP_FILEPATH }}
+          path: ${{ env.RELEASE_FOLDER_NAME }}
+          directory: ${{ env.OUT_DIRECTORY }}
+        
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.ZIP_FILEPATH }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
