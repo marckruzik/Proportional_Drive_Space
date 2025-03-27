@@ -29,7 +29,7 @@ jobs:
           ZIP_FILEPATH="${{ github.workspace }}/$RELEASE_FOLDER_NAME.zip"
           echo "ZIP_FILEPATH=$ZIP_FILEPATH" >> $GITHUB_ENV
           
-          APP_DIRECTORY="${{ env.WORKING_DIRECTORY }}/SingleAvaloniaApp"
+          APP_DIRECTORY="${{ env.WORKING_DIRECTORY }}/Proportional_Drive_Space"
           echo "APP_DIRECTORY=$APP_DIRECTORY" >> $GITHUB_ENV
     
       - name: Checkout repository
