@@ -31,7 +31,7 @@ namespace DrivePlot
         internal static Plot from_list_drive_get_plot(List<Drive> list_drive)
         {
             Plot plot = new();
-            plot.Title("Drive Space Proportional");
+            plot.Title("Proportional Drive Space");
 
             //--------------------------------------------------------
             // Bars
