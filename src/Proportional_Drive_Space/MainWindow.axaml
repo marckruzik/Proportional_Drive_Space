@@ -3,8 +3,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
-        x:Class="SingleAvaloniaApp.MainWindow"
-        Title="SingleAvaloniaApp">
+        x:Class="ProportionalDriveSpace.MainWindow"
+        Title="Proportional Drive Space">
   <Grid>
     <Image Name="DisplayImage" Stretch="Fill" />
     <Button Content="Refresh" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="100" Click="OnRefreshButtonClick"/>

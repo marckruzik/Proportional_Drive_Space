@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using Avalonia.Interactivity;
 using DrivePlot;
 
-namespace SingleAvaloniaApp
+namespace ProportionalDriveSpace
 {
     public partial class MainWindow : Window
     {
