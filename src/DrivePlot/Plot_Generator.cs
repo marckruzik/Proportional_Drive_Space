@@ -110,13 +110,32 @@ namespace DrivePlot
         {
             int from_byte_to_gb(long byt) => (int)(byt / Math.Pow(1024, 3));
 
-            List<Drive> list_drive = DriveInfo.GetDrives().Select(drive =>
-                new Drive
+            List<Drive> list_drive =
+                DriveInfo
+                .GetDrives()
+                .Where(d => d.IsReady == true)
+                .Select(drive =>
                 {
-                    letter = drive.Name,
-                    label = drive.VolumeLabel,
-                    space_used_gb = from_byte_to_gb(drive.TotalSize - drive.AvailableFreeSpace),
-                    space_free_gb = from_byte_to_gb(drive.AvailableFreeSpace)
+                    try
+                    {
+                        return new Drive
+                        {
+                            letter = drive.Name,
+                            label = drive.VolumeLabel,
+                            space_used_gb = from_byte_to_gb(drive.TotalSize - drive.AvailableFreeSpace),
+                            space_free_gb = from_byte_to_gb(drive.AvailableFreeSpace)
+                        };
+                    }
+                    catch (IOException)
+                    {
+                        return new Drive
+                        {
+                            letter = drive.Name,
+                            label = "Unknown",
+                            space_used_gb = 0,
+                            space_free_gb = 0
+                        };
+                    }
                 }
             ).ToList();
             return list_drive;
