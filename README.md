@@ -57,3 +57,5 @@ The total height of the graph is automatically adjusted based on the number of d
   * Avalonia does not have a toolbox with controls, it's all xaml-like writing. Fine for a one screen app.
 * The plot is not interactive.
   * There is a nuget [ScottPlot.Avalonia](https://www.nuget.org/packages/ScottPlot.Avalonia), to make interactive plots. Maybe the plot could be made interactive, depending on the possibilities of this nuget.
+* The code uses `DriveInfo.GetDrives()`, which does not seem to detect ext4 partitions (Linux partitions).
+  * Windows has no native support for ext4 partitions, so maybe `DriveInfo.GetDrives()` do not detect them.
