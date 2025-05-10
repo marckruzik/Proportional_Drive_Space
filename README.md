@@ -1,8 +1,8 @@
-# Drive Space Proportional
+# Proportional Drive Space
 Are you looking for the free space on one of your drives and want to see it immediately?
 Most software displays all drives with the same visual size, making a 1 TB drive appear the same size as a 50 GB drive. This makes it difficult to get a clear sense of the actual available space on each drive.
 
-**Drive Space Proportional** is a simple software that visualizes disk space in a proportional way. Its main use is to help users quickly identify drives with large amounts of free space, making it easier to store large files, copy datasets, install new video games, among other things.
+**Proportional Drive Space** is a simple software that visualizes disk space in a proportional way. Its main use is to help users quickly identify drives with large amounts of free space, making it easier to store large files, copy datasets, install new video games, among other things.
 
 ![](image/clean.png)
 
