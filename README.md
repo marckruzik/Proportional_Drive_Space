@@ -61,3 +61,6 @@ The total height of the graph is automatically adjusted based on the number of d
   * Windows does not natively support ext4 partitions, so `DriveInfo.GetDrives()` likely cannot detect them.
 * The software does not display its version number. The only way to find the version number is to look at the name of the ZIP file or the name of the uncompressed folder (if preserved).
   * Displaying the version number in the title would make it easy to see the version number, and ensure that users are running the latest version when reporting problems.
+* Names displayed are volume labels (the same names as those visible in Properties), which can differ from names displayed by Windows Explorer.
+  * For a main drive, the software can display no name, but Windows Explorer can display a default name (such as "Local Disk").
+  * For a network drive, the software can display the volume label (such as "drive"), but Windows Explorer can display the user-friendly name (such as "archive drive").  
